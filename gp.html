@@ -1,0 +1,1037 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+
+		<title>Discontinuous Regression Surface Fitting</title>
+
+		<meta name="description" content="Discontinuous Regression Surface Fitting">
+		<meta name="author" content="Riddhiman Saha">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/blood.css" id="theme">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css" id="highlight-theme">
+		<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"> -->
+		<link href="css/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+		<link href="css/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section id="title">
+					<img data-src="media/movieblack.gif">
+					<h3 style="color: #f82249;">Discontinuous Regression Surface Fitting</h3>
+					<p>Group Project</p>
+					<p><strong>Statistics Comprehensive</strong></p>
+				</section>
+				<section id="introduction"  style="text-align: left; font-size: 40px;">
+					<section>
+						<h3>Introduction</h3>
+						<ul>
+							<li class="fragment fade-up">
+								What are we going to do?
+							</li>
+							<li style="list-style-type: none;" class="fragment fade-in">
+								We have a collection of points in $\mathbb{R}^2$ arranged in a grid inside $[0,1)\times[0,1)$, and also the associated $z$ values for each point. We want to perform &ldquo;smoothing&rdquo; for the given data, and predict $z$ value for some point $(x_0,y_0)\in[0,1)\times[0,1)$.<br>Note that, the underlying function 'may have jumps at some locations, but mostly smooth'.
+								<!-- So we can think of the following:<br>
+								$$z_{ij}=f(x_i, y_j)+\epsilon_{ij}; i,j=1,\ldots,n;$$where $x_i=y_i=\frac{i-1}{n}, i=1,\ldots,n$ & $\epsilon_{ij}$ random error<br>
+								Given $(x_0,y_0) \in [0,1)\times[0,1)$, we want to predict $f(x_0, y_0)$ -->
+							</li>
+							<li class="fragment fade-up">
+								Why are we interested?
+							</li>
+							<li style="list-style-type: none;" class="fragment fade-in">
+								Not just another new type of regression. It has got many practical applications. For example: (contd.)
+							</li>
+						</ul>
+					</section>
+					<section>
+						<ul>
+							<li>
+								Image Denoising:
+								<br>
+								<div style="text-align: center;">
+									<div style="display: inline; vertical-align: middle;">
+										<img data-src="media/noise.jpeg" width="20%">
+									</div>
+									<div style="display: inline;">
+										$\Longrightarrow$
+									</div>
+									<div style="display: inline; vertical-align: middle;">
+										<img data-src="media/original.jpeg" width="20%">
+									</div>
+								</div>
+							</li>
+							<li class="fragment" data-fragment-index="1">
+								<span class="fragment" data-fragment-index="1">Working with Elevation data </span><span class="fragment" data-fragment-index="2"> or Temparature Data:</span>
+								<br>
+								<div style="text-align: center;">
+									<img data-src="media/elevation.png" style="height: 30vh; border-right: 3px solid white; padding-right: 15px" class="fragment" data-fragment-index="1">
+									<img data-src="media/temparature.jpg" style="height: 30vh; padding-left: 10px" class="fragment" data-fragment-index="2">
+								</div>
+							</li>
+						</ul>
+					</section>
+					<section>
+						<h3>
+							We are going to discuss:
+						</h3>
+						<ol>
+							<li>Defining the problem</li>
+							<li>Describing the conventional method</li>
+							<li>Description of the proposed method considering jumps</li>
+							<li>Results from simulation study</li>
+							<li>One practical example</li>
+						</ol>
+					</section>
+				</section>
+				<section style="text-align: left;">
+					<section>
+						<h3>
+							Problem Statement
+						</h3>
+						$$f:[0,1)\times[0,1)\rightarrow\mathbb{R}$$
+						We are given data-points in an $n\times n$ grid: $\{(x_i,y_j)|i,j=1,\ldots,n\}$, where $x_i=y_i=\frac{i-1}{n}$
+						$$z_{ij}=f(x_i,y_j)+\epsilon_{ij}\text{ , } \epsilon_{ij}\text{ i.i.d. error}$$
+						Given $(x_0,y_0)\in[0,1)\times[0,1)$, want to predict $f(x_0,y_0)$
+					</section>
+				</section>
+				<section style="text-align: left; font-size: 34px;">
+					<section>
+						<h4>Conventional Method : Kernel Smoothing (2-D)</h4>
+						<div class="r-stack">
+							<div class="fragment fade-out" data-fragment-index="0">
+								We can do nonparametric regression, with bivariate kernel.
+								<ul>
+									<li>
+										Any <strong>bivariate density</strong> function can be used.
+									</li>
+									<li>
+										Given any univariate kernel $f(x)$, we can define $K(x,y)=f(x)f(y)$
+									</li>
+									<li>
+										For example, univariate <strong>triangular</strong> kernel is given by, $(1-|x|)I_{\{|x|\leq 1\}}$. So we can define, $K(x,y)=(1-|x|)(1-|y|)I_{\{|x|\leq 1, |y|\leq 1\}}$
+									</li>
+								</ul>
+							</div>
+							<div class="fragment current-visible" data-fragment-index="0" style="text-align: center;">
+								<p>Plot of Triangular Kernel</p>
+								<iframe data-src="media/triangular.html" scrolling="no" height="500px" width="550px" frameborder="0" style="display: block; margin: 0 auto;"></iframe>
+							</div>
+							<div class="fragment fade-out" data-fragment-index="3" style="font-size: 30px;">
+								<div class="fragment" data-fragment-index="1">
+									To predict the response variable at $(x_0, y_0)$, we can use <strong>Local polynomial smoothing</strong>.
+									For local polynomial of $0$-degree, we minimize,
+									$$\sum_{i=1}^n\sum_{j=1}^n(z_{ij}-\alpha)^2 K\left(\frac{x_i-x_0}{h},\frac{y_j-y_0}{h}\right)$$
+									where, $h$ is the <strong>smoothing bandwidth</strong>.
+								</div>
+								<div class="fragment" data-fragment-index="2">
+									<br>
+									The estimated value at $(x_0,y_0)$ is given by, 
+									$$\hat{f_0}(x_0, y_0)=\hat{\alpha}=\frac{\sum_{i=1}^n\sum_{j=1}^n w_{ij}z_{ij}}{\sum_{i=1}^n\sum_{j=1}^n w_{ij}}$$
+									where, $w_{ij}=K\left(\frac{x_i-x_0}{h}, \frac{y_j-y_0}{h}\right)$
+								</div>
+							</div>
+							<div class="fragment" data-fragment-index="3" style="font-size: 26px;">
+								<div>
+									For local polynomial of $1$-degree, we minimize,
+									$$\sum_{i=1}^n\sum_{j=1}^n(z_{ij}-\alpha-\beta_1(x_i-x_0)-\beta_2(y_j-y_0))^2 K\left(\frac{x_i-x_0}{h},\frac{y_j-y_0}{h}\right)$$
+								</div>
+								<br>
+								<div class="fragment" data-fragment-index="4">
+									The estimated value at $(x_0,y_0)$ is given by,
+									<div style="font-size: 20px;"> 
+										$$\hat{f_1}(x_0, y_0)=\hat{\alpha}\text{, where}, [\hat{\alpha}, \hat{\beta_1}, \hat{\beta_2}]^T=\\
+										\begin{bmatrix}
+										\sum\sum w_{ij} & \sum\sum w_{ij}(x_i-x_0) & \sum\sum w_{ij}(y_j-y_0)\\
+										\sum\sum w_{ij}(x_i-x_0) & \sum\sum w_{ij}(x_i-x_0)^2 & \sum\sum w_{ij}(x_i-x_0)(y_j-y_0)\\
+										\sum\sum w_{ij}(y_j-y_0) & \sum\sum w_{ij}(x_i-x_0)(y_j-y_0) & \sum\sum w_{ij}(y_j-y_0)^2
+										\end{bmatrix}^{-1}
+										\begin{bmatrix}
+										\sum\sum z_{ij}w_{ij}\\
+										\sum\sum z_{ij}w_{ij}(x_i-x_0)\\
+										\sum\sum z_{ij}w_{ij}(y_j-y_0)
+										\end{bmatrix}$$
+									</div>
+								</div>
+							</div>
+						</div>
+					</section>
+					<section style="font-size: 26px;">
+						<h4>
+							Example of Kernel Smoothing
+						</h4>
+						<div class="r-stack">
+							<div class="fragment fade-out" data-fragment-index="0">
+								Consider the function, $f:[0,1)\times[0,1)\rightarrow \mathbb{R}$
+								$$f(x, y)=-2(x-0.5)^2 - 2(y-0.5)^2 + I_{\{(x-0.5)^2 + (y-0.5)^2 \leq 0.25^2\}}$$
+								$f$ was evaluated on a $100\times 100$ grid. Here is the plot of the points and the true surface:
+								<br>
+								<div style="text-align: center;">
+									<iframe src="media/truevalues.html" scrolling="no" height="450px" width="850px" frameborder="0"></iframe>
+								</div>
+							</div>
+							<div class="fragment current-visible" data-fragment-index="0">
+								Consider the function, $f:[0,1)\times[0,1)\rightarrow \mathbb{R}$
+								$$f(x, y)=-2(x-0.5)^2 - 2(y-0.5)^2 + I_{\{(x-0.5)^2 + (y-0.5)^2 \leq 0.25^2\}}$$
+								$f$ was evaluated on a $100\times 100$ grid, and noises were added from $N(0, \sigma^2)$ with $\sigma=0.3$. Here is the noisy input data:
+								<br>
+								<div style="text-align: center;">
+									<iframe data-src="media/input.html" scrolling="no" height="450px" width="850px" frameborder="0"></iframe>
+								</div>
+							</div>
+							<div class="fragment current-visible" data-fragment-index="1">
+								On the noisy input, we performed the conventional kernel smoothing with triangular density and <strong>$h=0.15$</strong>
+								<br>
+								Here is the fitted surface for $0$-degree:
+								<div style="text-align: center;">
+									<iframe data-src="media/conv_deg0.html" scrolling="no" height="450px" width="850px" frameborder="0"></iframe>
+								</div>
+							</div>
+							<div class="fragment current-visible" data-fragment-index="2">
+								On the noisy input, we performed the conventional kernel smoothing with triangular density and <strong>$h=0.15$</strong>
+								<br>
+								Here is the fitted surface for $1$-degree:
+								<div style="text-align: center;">
+									<iframe data-src="media/conv_deg1.html" scrolling="no" height="450px" width="850px" frameborder="0"></iframe>
+								</div>
+							</div>
+						</div>
+					</section>
+					<section>
+						<h4>
+							Drawbacks : Conventional Kernel Smoothing
+						</h4>
+						<div>
+							The jump imformation was completely lost in the last two outputs. The fitted surface was smooth near the &ldquo;Jump Location Curve&rdquo;, but in reality, there is a jump with magnitude $1$ in the true surface.
+						</div>
+						<div class="fragment fade-down">
+							$$\Bigg\downarrow$$
+							To overcome the issue, we propose a method where we try to preserve the jump information while doing kernel smoothing.
+						</div>
+					</section>
+				</section>
+				<section  style="text-align: left;">
+					<section>
+						<h4>
+							Proposed Method
+						</h4>
+						<ul>
+							<li>
+								We want to preserve the jump information.
+							</li>
+							<li>
+								To estimate $f$ at $(x_0,y_0)$, we shall <strong>not</strong> consider <strong>all</strong> points. Instead, we can do a neighbourhood-based clustering.
+							</li>
+							<li>
+								For satisfactory performance, we introduce some more assumptions on $f$.
+							</li>
+						</ul>
+					</section>
+					<section>
+						<h4>
+							Modified Problem Statement
+						</h4>
+						<div style="font-size: 30px;">
+							$$f:[0,1)\times[0,1)\rightarrow\mathbb{R}$$
+							We are given data-points in an $n\times n$ grid: $\{(x_i,y_j)|i,j=1,\ldots,n\}$, where $x_i=y_i=\frac{i-1}{n}$
+							$$z_{ij}=f(x_i,y_j)+\epsilon_{ij}\text{ , } \epsilon_{ij}\sim N(0, \sigma^2)\text{ i.i.d., }\sigma^2\text{ unknown.}$$
+							<div class="fragment">
+								$f$ has the following properties:
+								<ul>
+									<li>
+										Except at jump location curves, $f$ is continuous & locally linear(i.e., can be approximated by a plane.)
+									</li>
+									<li>
+										The jump location curves are smooth, so that, it can be approximated by a straight line in a small region.
+									</li>
+								</ul>
+								Under this setup, given $(x_0, y_0)\in[0, 1)\times[0,1)$, we want to predict $f(x_0, y_0)$.
+							</div>
+						</div>
+					</section>
+					<section>
+						<h4>
+							Proposed Method : In Brief
+						</h4>
+						<ul>
+							<li class="fragment">
+								First fix a <strong>neighbourhood</strong> around $(x_0,y_0)$
+							</li>
+							<li class="fragment">
+								Not all points in the neighbourhood may belong to the same suface/layer.
+							</li>
+							<li class="fragment">
+								So, try to <strong>partition</strong> the neighbourhood, with a straight line.
+							</li>
+							<li class="fragment">
+								Check if the partition is worth doing. Does the partition reveal two <strong>distinct</strong> planes?
+							</li>
+							<li class="fragment">
+								Based on that, obtain a set of points which (possibly) <strong>shares the same surface</strong> with $(x_0,y_0)$
+							</li>
+							<li class="fragment">
+								Use only those points to predict $f(x_0,y_0)$
+							</li>
+						</ul>
+					</section>
+					<section>
+						<h4>
+							Proposed Method : In Brief
+						</h4>
+						<div style="text-align: center;">
+							<iframe data-src="media/brief.html" scrolling="no" height="465px" width="465px" frameborder="0"></iframe>
+						</div>
+					</section>
+				</section>
+				<section style="text-align: left;">
+					<section>
+						<h4>
+							Proposed Method : Step 1
+						</h4>
+						<div style="font-size: 30px;">
+							Given $(x_0,y_0)$, first we fix a neighbourhood around this point.
+							<br>
+							Fix some $l$. Then we have the square neighbourhood, $$S=[x_0-l,x_0+l]\times[y_0-l,y_0+l]$$
+							<br>
+							Define, $N(x_0, y_0)=$ set of design points contained in $S$.
+							<!-- <br>
+							For points near boundary, the neighbourhood may not be a square. We can do &ldquo;padding&rdquo;, or can work with the truncated neighbourhood. -->
+							<div class="fragment">
+								<hr>
+								For $100\times 100$ grid, if $(x_0,y_0)$ is a design point, then $l=0.05\Rightarrow N(x_0,y_0)$ is a set of $121$ points arranged in a $11\times 11$ grid.
+								<br>
+								We say that, this is a neighbourhood with &ldquo;window-width $11$&rdquo;.
+							</div>
+						</div>
+					</section>
+					<section>
+						<h4>
+							Proposed Method : Step 1 (contd.)
+						</h4>
+						<div style="font-size: 30px;">
+							<strong>Example:</strong>
+							<!-- <br> -->
+							Same function $f$, added noise with $\sigma=0.1$
+							<br>
+							Say, $(x_0,y_0)=(0.32, 0.70)$ and $l=0.06$
+							<br>
+							So, $N(x_0, y_0)=\{0.26, 0.28, \ldots,0.38\}\times\{0.64,0.66,\ldots,0.76\}$
+							<br>
+							How does it look like?
+							<br>
+							<div style="text-align: center;" class="r-stack">
+								<div class="fragment current-visible">
+									<iframe data-src="media/grid.html" scrolling="no" height="500px" width="500px" frameborder="0"></iframe>
+								</div>
+								<div class="fragment">
+									<iframe data-src="media/zoomgrid.html" scrolling="no" height="500px" width="500px" frameborder="0"></iframe>
+								</div>
+							</div>
+						</div>
+					</section>
+				</section>
+				<section style="text-align: left;">
+					<section>
+						<h4>
+							Proposed Method : Step 2
+						</h4>
+						<div style="font-size: 30px;">
+							Fit a least-square plane with the points in $N(x_0,y_0)$, i.e., fit the model,
+							$$z_{ij}=\alpha+\beta_1 x_i+\beta_2 y_j + \eta_{ij}\text{ , } \eta_{ij}\text{ i.i.d. error}$$
+							<hr>
+							<div style="font-size: 26px;">
+								For our example, we obtained: $\hat{z}=2.9+7.2x-7.3y$ & $RSS=15.242$
+							</div>
+							<div style="text-align: center;">
+								<iframe data-src="media/lsplane.html" scrolling="no" height="450px" width="500px" frameborder="0"></iframe>
+							</div>
+							<!-- By <a href="https://www.google.com">one theorem</a>, $\hat{\beta_1}, \hat{\beta_2}$ contains jump-information.
+							<br>
+							$\vec{v_{ij}}=(\hat{\beta_1}, \hat{\beta_2})$ denotes the direction of jump. -->
+						</div>
+					</section>
+					<section>
+						<h4>
+							Proposed Method : Step 2 (Contd.)
+						</h4>
+						<div style="font-size: 30px;">
+							The least square plane is perpendicular to the vector $(\hat{\beta_1}, \hat{\beta_2}, -1)$
+							<hr>
+							Let's draw the normal vector $(7.2, -7.3, -1)$:
+							<div style="text-align: center;">
+								<iframe data-src="media/lsplaneiso.html" scrolling="no" height="500px" width="500px" frameborder="0"></iframe>
+							</div>
+						</div>
+					</section>
+					<section>
+						<h4>
+							Proposed Method : Step 2 (Contd.)
+						</h4>
+						<div style="font-size: 30px;">
+							So, $\vec{v_{ij}}=(\hat{\beta_1}, \hat{\beta_2})$ denotes the direction of jump.
+							<hr>
+							Here is the grid with the vector $\vec{v_{ij}}=(7.2, -7.3)$ on $x-y$ plane:
+							<div style="text-align: center;">
+								<iframe data-src="media/projected.html" scrolling="no" height="500px" width="500px" frameborder="0"></iframe>
+							</div>
+						</div>
+					</section>
+					<section>
+						<h4>
+							Proposed Method : Step 2 (Contd.)
+						</h4>
+						<div style="font-size: 30px;">
+							The jump location curve can be approximated by a straight line perpendicular to $\vec{v_{ij}}$, i.e., parallel to $(-\hat{\beta_2}, \hat{\beta_1})$.
+							So, the partitioning line is of the form, $\hat{\beta_1}x+\hat{\beta_2}y=c$, but $c$ is unknown.
+							<hr>
+							Here are 3 parallel lines for $c=$<div style="display: inline; background-color: #DDDDDD;"><font color="green">$-2.2,$</font><font color="black">$-3.0,$</font><font color="blue">$-3.2$</font></div>
+							<div style="text-align: center;">
+								<iframe data-src="media/parallel.html" scrolling="no" height="500px" width="500px" frameborder="0"></iframe>
+							</div>
+						</div>
+					</section>
+				</section>
+				<section style="text-align: left;">
+					<section>
+						<h4>
+							Proposed Method : Step 3
+						</h4>
+						<div style="font-size: 30px;">
+							Now we want to find the best $c$. But, how do we define &ldquo;best&rdquo; in this context?
+							<br>
+							<ul>
+								<li class="fragment fade-in-then-semi-out" data-fragment-index="1">
+									For each $c$, we get one straight line. Therefore, we have a partition of $N(x_0,y_0)$ with 2 disjoint parts.
+								</li>
+								<li  class="fragment fade-in-then-semi-out" data-fragment-index="2">
+									In each part, we can fit a least-square plane.
+								</li>
+								<li class="fragment fade-in-then-semi-out"  data-fragment-index="3">
+									From these two planes, we can calculate residual sum of squares. Call it $RSS(c)$
+								</li>
+								<li class="fragment"  data-fragment-index="4">
+									Optimal $c$ is given by, $c_{opt}=\underset{c\in \mathbb{R}}{\operatorname{arg min}}RSS(c)$
+								</li>
+							</ul>
+						</div>
+					</section>
+					<section>
+						<h4>
+							Proposed Method : Step 3 (Contd.)
+						</h4>
+						<div style="font-size: 30px;">
+							Here is the partition for $c=-3.0$
+							<br>
+							<div style="text-align: center;">
+								<ul>
+									<li style="color: green;">
+										$\hat{\beta_1}x+\hat{\beta_2}y\leq c$
+									</li>
+									<li style="color: red;">
+										$\hat{\beta_1}x+\hat{\beta_2}y> c$
+									</li>
+								</ul>
+							</div>
+							<div style="text-align: center;">
+								<iframe data-src="media/partition-3.html" scrolling="no" height="500px" width="500px" frameborder="0"></iframe>
+							</div>
+						</div>
+					</section>
+					<section>
+						<h4>
+							Proposed Method : Step 3 (Contd.)
+						</h4>
+						<div style="font-size: 30px;">
+							Two least square planes for $c=-3.0$:
+							<br>
+							<!-- <div style="text-align: center;">
+								<ul>
+									<li style="color: green;">
+										$\hat{\beta_1}x+\hat{\beta_2}y\leq c$
+									</li>
+									<li style="color: red;">
+										$\hat{\beta_1}x+\hat{\beta_2}y> c$
+									</li>
+								</ul>
+							</div> -->
+							<div style="text-align: center;">
+								<iframe data-src="media/2planes.html" scrolling="no" height="450px" width="500px" frameborder="0"></iframe>
+								<br>
+								$RSS(c)=$<font color="green">$0.396$</font>$+$<font color="red">$8.932$</font>$=9.328$
+							</div>
+						</div>
+					</section>
+					<section>
+						<h4>
+							Proposed Method : Step 3 (Contd.)
+						</h4>
+						<div style="font-size: 30px;">
+							Want to find $c_{opt}$.
+							<br>
+							<div style="text-align: center;">
+								<img data-src="media/RSSc.png">
+								<br>
+								<strong>$c_{opt}=-2.63$</strong>
+							</div>
+						</div>
+					</section>
+					<section>
+						<h4>
+							Proposed Method : Step 3 (Contd.)
+						</h4>
+						<div style="font-size: 30px;">
+							Optimal partitioning obtained from $\hat{\beta_1}x+\hat{\beta_2}y=c_{opt}$
+							<br>
+							<div style="text-align: center;">
+								<iframe data-src="media/optimalplanes.html" scrolling="no" height="450px" width="500px" frameborder="0"></iframe>
+								<br>
+								<strong>$RSS(c_{opt})=5.614$</strong>
+							</div>
+						</div>
+					</section>
+				</section>
+				<section style="text-align: left;">
+					<section>
+						<h4>
+							Proposed Method : Step 4
+						</h4>
+						<div style="font-size: 30px;">
+							We have obtained a partition. But <strong>is there really a partition?</strong>
+							<br>
+							<ul>
+								<li class="fragment fade-down" data-fragment-index="1">
+									While we fitted a single plane, we obtained one value of $RSS$. Call it $RSS_0$.
+								</li>
+								<li class="fragment fade-up" data-fragment-index="1">
+									For the partitioned fit, we obtained $RSS(c_{opt})$, smaller than $RSS_0$.
+								</li>
+								<li class="fragment fade-down" data-fragment-index="2">
+									If there really exists a jump in the neighbourhood, then we expect that $RSS_0$ would be significantly higher than $RSS(c_{opt})$. Otherwise, they would be close to each other.
+								</li>
+								<li class="fragment fade-up" data-fragment-index="2">
+									So we can do a hypothesis testing to determine whether we should <strong>trust</strong> the obtained partition.
+								</li>
+							</ul>
+						</div>
+					</section>
+					<section>
+						<h4>
+							Proposed Method : Step 4 (Contd.)
+						</h4>
+						<div style="font-size: 30px;">
+							<strong>Hypothesis testing:</strong>
+							$$H_0:\text{Jump location curve passes through the neighbourhood}$$
+							$$H_A:H_0\text{ is false}$$
+							<div class="fragment">
+								In other words, we have the model:
+								$$z_{ij} = \begin{cases} 
+								\left(p_1+q_1x_i+r_1y_j+\eta_{ij} \right), & \text{if }(x_i,y_j)\in \text{Cluster-1} \\
+								\left(p_2+q_2x_i+r_2y_j+\eta_{ij} \right), & \text{if }(x_i,y_j)\in \text{Cluster-2}
+								\end{cases}
+								$$
+							</div>
+							<div class="fragment">
+								and, we want to test,
+								$$H_0:p_1=p_2,q_1=q_2,r_1=r_2$$
+								$$H_A:H_0\text{ is false}$$
+							</div>
+						</div>
+					</section>
+					<section>
+						<h4>
+							Proposed Method : Step 4 (Contd.)
+						</h4>
+						<div style="font-size: 30px;">
+							<strong>Hypothesis testing:</strong>
+							We had assumed that noises follow $N(0,\sigma^2)$.
+							We can do $F\text{-test}$:
+							$$F=\frac{\left(RSS_0-RSS\right)/3}{RSS/(m-6)},m=\#N(x_0,y_0)$$
+							$$\text{Under }H_0, F\sim F_{3,m-6}$$
+							Based on level of significance $\alpha$, we can make a decision.
+							<div class="fragment fade-up">
+								<hr>
+								We had, $RSS_0=15.242$, $RSS=5.614$.
+								<br>
+								$m=13\times 13=169$. Set $\alpha=0.001$
+								<br>
+								Hence, $F=93.179$. Therefore, $p\text{-value}=3.63\times 10^{-35}$
+								<br>
+								<strong>Conclusion:</strong> There is a jump location curve passing through the neighbourhood. So we shall work with the obtained partition.
+							</div>
+					</section>
+				</section>
+				<section style="text-align: left;">
+					<section>
+						<h4>
+							Proposed Method : Step 5
+						</h4>
+						<div style="font-size: 30px;">
+							We had the point $(x_0,y_0)$ & its neighbourhood $N(x_0,y_0)$.
+							<ul>
+								<li class="fragment fade-in-then-semi-out">
+									After the testing, either we shall work with $N(x_0,y_0)$ or a subset of it. Call it $N^*(x_0,y_0)$
+								</li>
+								<li class="fragment fade-in-then-semi-out">
+									In case we fail to reject $H_0$, $N^*(x_0,y_0)=N(x_0,y_0)$
+								</li>
+								<li class="fragment fade-in-then-semi-out">
+									If $H_0$ was rejected, $N^*(x_0,y_0)$ is the subset of $N(x_0,y_0)$ which shares the same side of the partitioning line with $(x_0,y_0)$
+								</li>
+							</ul>
+					</section>
+					<section>
+						<h4>
+							Proposed Method : Step 5 (Contd.)
+						</h4>
+						<div style="font-size: 30px;">
+							Now we shall do local polynomial smoothing with points in $N^*(x_0,y_0)$
+							<br>
+							<div class="fragment">
+								For $0$-degree local polynomial, we minimize,
+								$$\mathop{\sum\sum}_{(x_i,y_j)\in N^*}(z_{ij}-\alpha)^2 K\left(\frac{x_i-x_0}{h},\frac{y_j-y_0}{h}\right)$$
+							</div>
+							<div class="fragment">
+								and, $\hat{f_0}(x_0,y_0)$ is given by,
+								$$\hat{f_0}(x_0, y_0)=\hat{\alpha}=\frac{\mathop{\sum\sum}_{(x_i,y_j)\in N^*}w_{ij}z_{ij}}{\mathop{\sum\sum}_{(x_i,y_j)\in N^*} w_{ij}}$$
+								where, $w_{ij}=K\left(\frac{x_i-x_0}{h}, \frac{y_j-y_0}{h}\right)$
+							</div>
+							<div class="fragment">
+								Similarly, we can do smoothing with $1$-degree polynomial.
+							</div>
+					</section>
+				</section>
+				<section>
+					<section data-auto-animate>
+						<h4 data-id="heading">
+							Summary of the method
+						</h4>
+						<pre data-id="description">
+							<code class="hljs" data-trim data-noescape>
+								<strong>Here is a summary of what we did:</strong>
+							</code>
+						</pre>
+					</section>
+					<section data-auto-animate>
+						<h4 data-id="heading">
+							Summary of the method
+						</h4>
+						<pre data-id="description">
+							<code class="hljs" data-trim data-line-numbers="1,2" data-noescape>
+								We started with a point (x<sub>0</sub> ,y<sub>0</sub>)
+								And, constructed its neighbourhood N(x<sub>0</sub> ,y<sub>0</sub>)
+							</code>
+						</pre>
+					</section>
+					<section data-auto-animate>
+						<h4 data-id="heading">
+							Summary of the method
+						</h4>
+						<pre data-id="description">
+							<code class="hljs" data-trim data-line-numbers="3,4" data-noescape>
+								We started with a point (x<sub>0</sub> ,y<sub>0</sub>)
+								And, constructed its neighbourhood N(x<sub>0</sub> ,y<sub>0</sub>)
+								In N(x<sub>0</sub> ,y<sub>0</sub>), we fitted least square plane<br>and, projected the normal vector onto x-y plane.
+								This gave the direction of the jump.
+							</code>
+						</pre>
+					</section>
+					<section data-auto-animate>
+						<h4 data-id="heading">
+							Summary of the method
+						</h4>
+						<pre data-id="description">
+							<code class="hljs" data-trim data-line-numbers="5,6" data-noescape>
+								We started with a point (x<sub>0</sub> ,y<sub>0</sub>)
+								And, constructed its neighbourhood N(x<sub>0</sub> ,y<sub>0</sub>)
+								In N(x<sub>0</sub> ,y<sub>0</sub>), we fitted least square plane<br>and, projected the normal vector onto x-y plane.
+								This gave the direction of the jump.
+								We tried to find the optimal partition line<br>perpendicular to the direction.
+								And performed a testing to decide if there is a jump.
+							</code>
+						</pre>
+					</section>
+					<section data-auto-animate>
+						<h4 data-id="heading">
+							Summary of the method
+						</h4>
+						<pre data-id="description">
+							<code class="hljs" data-trim data-line-numbers="7,8" data-noescape>
+								We started with a point (x<sub>0</sub> ,y<sub>0</sub>)
+								And, constructed its neighbourhood N(x<sub>0</sub> ,y<sub>0</sub>)
+								In N(x<sub>0</sub> ,y<sub>0</sub>), we fitted least square plane<br>and, projected the normal vector onto x-y plane.
+								This gave the direction of the jump.
+								We tried to find the optimal partition line<br>perpendicular to the direction.
+								And performed a testing to decide if there is a jump.
+								Depending on the conclusion, we obtained<br>a set of points similar to (x<sub>0</sub> ,y<sub>0</sub>)
+								With those points, we did local polynomial smoothing,<br>(which is just a weighted-average for 0-degree).
+							</code>
+						</pre>
+					</section>
+				</section>
+				<section>
+					<section style="text-align: left;">
+						<h4>
+							Proposed Method : Example
+						</h4>
+						<div style="font-size: 30px;">							
+							<div class="r-stack">
+								<div class="fragment current-visible" data-fragment-index="0" style="font-size: 36px;">
+									Now we know how to estimate $f$ at $(x_0,y_0)$.
+									<br>
+									So for the $100\times 100$ points, let's calculate the estimated values to obtain the fitted surface.
+								</div>
+								<div class="fragment current-visible" data-fragment-index="1">
+									<strong>Example:</strong> Same function $f$, with noise from $N(0, \sigma^2), \sigma=0.3$.
+									<br>
+									Here is the noisy input data:
+									<br>
+									<div style="text-align: center;">
+										<iframe data-src="media/input.html" scrolling="no" height="450px" width="850px" frameborder="0"></iframe>
+									</div>
+								</div>
+								<div class="fragment current-visible" data-fragment-index="2">
+									<strong>Parameters:</strong> We have chosen
+									<br>
+									$$\alpha = 0.001, l=0.03\text{ (or, window width 7)}, h=0.1$$
+									Here is output from the method with $0$-degree polynomial smoothing:
+									<br>
+									<div style="text-align: center;">
+										<iframe data-src="media/proposed_0deg.html" scrolling="no" height="450px" width="850px" frameborder="0"></iframe>
+									</div>
+								</div>
+							</div>
+						</div>
+					</section>
+					<section>
+						<iframe data-src="media/conv_deg0.html" scrolling="no" height="330px" width="850px" frameborder="0"></iframe>
+						<iframe data-src="media/proposed_0deg.html" scrolling="no" height="330px" width="850px" frameborder="0"></iframe>
+					</section>
+				</section>
+				<section>
+					<section style="text-align: left;">
+						<h4>
+							Simulation Study
+						</h4>
+						<div style="font-size: 30px;">
+							We know the method, but there are unknown parameters: $\alpha, l, h$
+							<br>
+							<div class="fragment">
+								Each of them has different effects.
+							</div>
+							<ul>
+								<li class="fragment fade-in-then-semi-out">
+									<strong>$\alpha$ :</strong> For jump/edge detection.
+								</li>
+								<li class="fragment fade-in-then-semi-out">
+									<strong>$l$ :</strong> Large $l\Rightarrow$ more points, but it can also violate assumptions.
+								</li>
+								<li class="fragment fade-in-then-semi-out">
+									<strong>$h$ :</strong> Smoothing bandwidth. Should be increased if noise is high.
+								</li>
+							</ul>
+							<div class="fragment">
+								<hr>
+								To get an idea on choosing the optimal parameters, we present a simulation study.
+								<br>
+								For different $\sigma$'s, we varied $l$ & $h$, and checked which one gives minimum MSE.
+								<br>
+								$\alpha=0.001$ seemed to be a reasonable choice for this case.
+							</div>
+						</div>
+					</section>
+					<section data-transition="zoom-in">
+						<h4>
+							Simulation Study : $\sigma=0.1$
+						</h4>
+						<img class="r-stretch" data-src="media/simulation/sigma0.1.png">
+					</section>
+					<section data-transition="fade">
+						<h4>
+							Simulation Study : $\sigma=0.2$
+						</h4>
+						<img class="r-stretch" data-src="media/simulation/sigma0.2.png">
+					</section>
+					<section data-transition="fade">
+						<h4>
+							Simulation Study : $\sigma=0.3$
+						</h4>
+						<img class="r-stretch" data-src="media/simulation/sigma0.3.png">
+					</section>
+					<section data-transition="fade">
+						<h4>
+							Simulation Study : $\sigma=0.4$
+						</h4>
+						<img class="r-stretch" data-src="media/simulation/sigma0.4.png">
+					</section>
+					<section data-transition="fade">
+						<h4>
+							Simulation Study : $\sigma=0.5$
+						</h4>
+						<img class="r-stretch" data-src="media/simulation/sigma0.5.png">
+					</section>
+					<section data-transition="fade">
+						<h4>
+							Simulation Study : $\sigma=0.6$
+						</h4>
+						<img class="r-stretch" data-src="media/simulation/sigma0.6.png">
+					</section>
+					<section data-transition="fade">
+						<h4>
+							Simulation Study : $\sigma=0.7$
+						</h4>
+						<img class="r-stretch" data-src="media/simulation/sigma0.7.png">
+					</section>
+					<section data-transition="fade">
+						<h4>
+							Simulation Study : $\sigma=0.8$
+						</h4>
+						<img class="r-stretch" data-src="media/simulation/sigma0.8.png">
+					</section>
+					<section data-transition="fade">
+						<h4>
+							Simulation Study : $\sigma=0.9$
+						</h4>
+						<img class="r-stretch" data-src="media/simulation/sigma0.9.png">
+					</section>
+					<section data-transition="fade">
+						<h4>
+							Simulation Study : $\sigma=1.0$
+						</h4>
+						<img class="r-stretch" data-src="media/simulation/sigma1.0.png">
+					</section>
+				</section>
+				<section style="text-align: left; font-size: 32px;">
+					<h4>
+						One Drawback
+					</h4>
+					Assumed that jump location curves are smooth (can be approximated by a straight line). What happens when it is violated?
+					<hr class="fragment" data-fragment-index="1">
+					<div class="r-stack">
+						<div class="fragment current-visible" data-fragment-index="1">
+							Consider this function:
+							$$g(x,y)=x + I_{\{y > 0.375 + 0.25x \text{ or } x > 0.5\}}$$
+							Added noise with $\sigma=0.05$
+							<br>
+							Window-width $9$ and $h=0.05$ were used.
+						</div>
+						<div class="fragment current-visible" data-fragment-index="2">
+							The original function contains a sharp jump location curve. In the fitted plane, the sharp edge was blurred.
+							<br>
+							<div style="text-align: center;">
+								<iframe data-src="media/drawback.html" scrolling="no" height="450px" width="850px" frameborder="0"></iframe>
+							</div>
+						</div>
+					</div>
+				</section>
+				<section style="font-size: 32px;">
+					<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+						<h3>
+							One Practical Example
+						</h3>
+						<br>
+						<img data-id="trueimg" data-src="media/practical/pepper.png" height="400px" width="400px">
+						<br>
+						<div data-id="heading">
+							We have this image ($256\times 256$)
+						</div>
+					</section>
+					<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+						<h3>
+							One Practical Example
+						</h3>
+						<br>
+						<img data-id="additional" data-src="media/practical/border_nonoise.png" height="400px" width="400px" style="padding-right: 10px;">
+						<img data-id="trueimg" data-src="media/practical/pepper.png" height="400px" width="400px" style="padding-left: 10px;">
+						<br>
+						<div data-id="footer">
+							Applying the method, we get these edges.
+						</div>
+					</section>
+					<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+						<h3>
+							One Practical Example
+						</h3>
+						<br>
+						<img data-id="trueimg" data-src="media/practical/pepper.png" height="400px" width="400px" style="padding-right: 10px;">
+						<img data-id="additional" data-src="media/practical/noise.png" height="400px" width="400px" style="padding-left: 10px;">
+						<br>
+						<div data-id="heading">
+							After adding noise from $N(0,0.06^2)$
+						</div>
+					</section>
+					<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+						<h3>
+							One Practical Example
+						</h3>
+						<br>
+						<img data-id="additional" data-src="media/practical/noise.png" height="400px" width="400px">
+						<br>
+						<div data-id="footer">
+							We applied the method on this image with $9\times 9$ window-width, threshold $=18$, and Epanechnikov kernel with $h=\frac{2}{256}$.
+						</div>
+					</section>
+					<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+						<h3>
+							One Practical Example
+						</h3>
+						<br>
+						<img data-id="additional" data-src="media/practical/noise.png" height="400px" width="400px" style="padding-right: 10px;">
+						<img data-id="trueimg" data-src="media/practical/border_i.png" height="400px" width="400px" style="padding-left: 10px;">
+						<br>
+						<div data-id="heading">
+							Here are the edges we obtained
+						</div>
+					</section>
+					<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+						<h3>
+							One Practical Example
+						</h3>
+						<br>
+						<img data-id="additional" data-src="media/practical/noise.png" height="400px" width="400px" style="padding-right: 10px;">
+						<img data-id="trueimg" data-src="media/practical/smoothed.png" height="400px" width="400px" style="padding-left: 10px;">
+						<br>
+						<div data-id="footer">
+							And the smoothed image
+						</div>
+					</section>
+					<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+						<h3>
+							One Practical Example
+						</h3>
+						<br>
+						<!-- <img data-id="additional" data-src="media/practical/noise.png" height="400px" width="400px" style="padding-right: 10px;"> -->
+						<img data-id="trueimg" data-src="media/practical/error.png" height="400px" width="400px">
+						<br>
+						<div data-id="heading" class="r-stack">
+							<div class="fragment fade-out" data-fragment-index="1">
+								Estimated noise $=(\text{noisy image}-\text{smoothed image})$
+							</div>
+							<div class="fragment current-visible" data-fragment-index="1">
+								Caution: It contains pattern of the image. Should not be the case.
+							</div>
+						</div>
+					</section>
+				</section>
+				<section style="text-align: left;">
+					<section style="font-size: 32px;">
+						<h4>
+							Concluding Remarks:
+						</h4>
+						We presented a method to fit regression surface considering jumps/edges.
+						<ul>
+							<li class="fragment">
+								In cases where jumps are present, it performs better compared to usual local polynomial smoothing.
+							</li>
+							<li class="fragment">
+								When the true function is unknown (which is going to be the case for practical purposes), <strong>choice of parameters</strong> may be a tough task.
+							</li>
+							<li style="list-style-type: none;" class="fragment">
+								In that case,
+								<ul>
+									<li>
+										<strong>Human presence</strong> is required to determine the optimal parameters. 
+									</li>
+									<li>
+										Or, <strong>task specific / domain specific</strong> parameters can be determined based on some examples.
+									</li>
+								</ul>
+							</li>
+							<li class="fragment">
+								We plan to <strong>explore further</strong> regarding the choice of parameters in different scenarios.
+							</li>
+						</ul>
+					</section>
+				</section>
+				<section data-background="media/collage.png" data-background-opacity=0.1 data-background-transition="zoom">
+					<section style="font-size: 34px; text-align: left;">
+						<ul>
+							<li>
+								<u>Acknowledgement:</u>
+								<ul>
+									<li>
+										Dr. Partha Sarathi Mukherjee, Associate Professor, ISI Kolkata
+									</li>
+									<li>
+										Dr. Debasis Sengupta, Professor, ISI Kolkata
+									</li>
+								</ul>
+							</li>
+							<br>
+							<li>
+								<u>Reference:</u>
+								<ul>
+									<li>
+										Qiu, P., & Yandell, B. (1997). Jump Detection in Regression Surfaces. Journal of Computational and Graphical Statistics, 6(3), 332-354. doi:10.2307/1390737
+									</li>
+								</ul>
+							</li>
+							<br>
+							<li>
+								<u>Submitted by:</u>
+								<ul>
+									<li>
+										Riddhiman Saha - BS1702
+									</li>
+									<li>
+										Somak Laha - BS1720
+									</li>
+									<li>
+										Souhardya Ray - BS1728
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</section>
+					<section>
+						<h2>
+							Thank You
+						</h2>
+					</section>
+				</section>
+				<!-- <section>
+					<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)"><h3 data-id="heading">V Slide 1</h1><p data-id="equation">$$y=x^2$$</p></section>
+					<section data-auto-animate data-auto-animaye-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)"><h3 data-id="heading">V Slide 2</h1><p>$$(a+b)^2=a^2+2ab+b^2$$</p><p data-id="equation">$$y=x^3$$</p></section>
+				</section> -->
+			</div>
+		</div>
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/zoom/zoom.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script src="plugin/math/math.js"></script>
+		<script src="plugin/chalkboard/plugin.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+				transition: 'convex',
+				// math: {
+				// // mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js' // online
+				// mathjax: 'node_modules/mathjax/es5/tex-chtml-full.js' //offline-local
+				// },
+				// chalkboard: {
+				// 	// src: "chalkboard/chalkboard.json",
+				// 	toggleChalkboardButton: { left: "80px" },
+				// 	toggleNotesButton: { left: "130px" },
+				// },
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes, RevealMath, RevealChalkboard, RevealZoom],
+			});
+			// Reveal.addEventListener("blackTheme", function(){setTimeout(function(){document.getElementById('theme').setAttribute('href','dist/theme/black.css'); return false;}, 1000);});
+			// Reveal.addEventListener("moonTheme", function(){setTimeout(function(){document.getElementById('theme').setAttribute('href','dist/theme/moon.css'); return false;}, 1000);});
+			// Reveal.addEventListener("moonTheme", function(){document.getElementById('theme').setAttribute('href','dist/theme/moon.css'); return false;});
+		</script>
+	</body>
+</html>
