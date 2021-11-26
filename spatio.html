@@ -25,7 +25,7 @@
     <body>
         <div class="reveal">
             <div class="slides">
-                <section data-background="spatio_media/front.jpg" data-background-opacity=0.1 style="font-size: 37px;">
+                <section data-background="spatio_media/front.jpg" data-background-opacity=0.07 style="font-size: 37px;">
                     <h3 style="color: #f82249DD; text-align: center;">
                         <b>Spatio-temporal Modelling <br>and Prediction of Infectious Disease Counts</b>
                     </h3>
@@ -86,200 +86,134 @@
                         </li>
                     </ul>
                 </section>
-                <section data-background="spatio_media/background.jpeg" data-background-opacity=0.05 style="text-align: left; font-size: 34px;">
-                    <h3>
+                <section data-auto-animate data-background="spatio_media/background.jpeg" data-background-opacity=0.05 style="text-align: left; font-size: 34px;">
+                    <h3 data-id="heading">
                         Basic models
                     </h3>
                     $$
-                    \begin{aligned}
-                    \frac{dS(t)}{dt} &= -\frac{\beta}{N}S(t)I(t)\\
-                    \frac{dI(t)}{dt} &= \frac{\beta}{N}S(t)I(t) - \gamma I(t)\\
-                    \frac{dR(t)}{dt} &= \gamma I(t)
-                    \end{aligned}
+                    S: \text{Susceptible}, I: \text{Infective}, R: \text{Recovered}
                     $$
-                </section>
-                <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 34px;">
-                    <h3>
-                        Definition
-                    </h3>
-                    Formally, a Markov Decision Process consists of
-                    <ul>
-                        <span class="fragment">
-                            <li>
-                                A state space $\mathcal{X}$
-                            </li>
-                            <li>
-                                An action space $\mathcal{A}$
-                            </li>
-                        </span>
-                        <li class="fragment">
-                            For each $a\in \mathcal{A}$, we have a Markov chain with state space $\mathcal{X}$ & transition matrix $P_a$.
-                            $$
-                            P_a(s, s')=\mathbb{P}\left[X_{t+1}=s'|X_t=s, A_t=a\right]
-                            $$
-                        </li>
-                        <li class="fragment">
-                            For each $a\in \mathcal{A}$, we have a real valued reward matrix.
-                            $$
-                            R_a(s, s')=\mathbb{E}\left[R_{t}|X_t=s, A_t=a, X_{t+1}=s'\right]
-                            $$
-                        </li>
-                    </ul>
-                    <span class="fragment">The tuple $(\mathcal{X}, \mathcal{A}, \{P_a\}, \{R_a\})$ defines the process completely.</span>
-                </section>
-                <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 34px;">
-                    <h3>
-                        Objective
-                    </h3>
-                    The goal is to find a good &ldquo;policy&rdquo;. <span class="fragment">A policy $\pi$ is a function,
-                    $$
-                    \pi:\mathcal{X}\rightarrow\mathcal{A}\\ \text{ or }\\
-                    \pi:\mathcal{X}\rightarrow\Delta{(\mathcal{A})}
-                    $$
-                    Given the policy, the decision maker will choose the action $\pi(s)$ when the process is at state $s$.</span>
                     <span class="fragment">
-                        Policies can also be time dependent, i.e., we may want to consider different $\pi_t$ for each time point.
+                        $$
+                        \begin{aligned}
+                        \frac{dS(t)}{dt} &= -\frac{\beta}{N}S(t)I(t)\\
+                        \frac{dI(t)}{dt} &= \frac{\beta}{N}S(t)I(t) - \gamma I(t)\\
+                        \frac{dR(t)}{dt} &= \gamma I(t)
+                        \end{aligned}
+                        $$
+                    </span>
+                    <span class="fragment">
+                        This is known as the <strong> Deterministic SIR model</strong>.
+                    </span>
+                    <span class="fragment"><br>Estimation? </span>
+                    <span class="fragment">Inference?</span>
+                </section>
+                <section data-auto-animate data-background="spatio_media/background.jpeg" data-background-opacity=0.05 style="text-align: left; font-size: 34px;">
+                    <h3 data-id="heading">
+                        SIR Model
+                    </h3>
+                    Rate of infection, $\lambda(t) = \frac{\beta}{N}S(t)I(t)$
+                    <br>
+                    Rate of recovery $= \gamma I(t)$
+                    <span class="fragment">
+                        <br>
+                        <hr>
+                        <br>
+                        This motivates the <strong>Stochastic SIR model</strong>.
                     </span>
                 </section>
-                <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 32px;" data-auto-animate>
-                    <h3 id="heading">
-                        Objective Function
+                <section data-background="spatio_media/background.jpeg" data-background-opacity=0.05 style="text-align: left; font-size: 34px;">
+                    <h3>
+                        Stochastic SIR Model
                     </h3>
-                    We want to maximize some cumulative function of the random rewards. These are called value functions.
-                    <ul>
-                        <li class="fragment fade-in-then-semi-out">
-                            If interested only upto a finite time, we can maximize,
-                            $$
-                            J_n(x_0)=\mathbb{E}\left[\sum_{t=0}^{n-1}R_t\mid X_0=x_0\right]
-                            $$
-                        </li>
-                        <li class="fragment">
-                            If interested upto long/infinite time, we can maximize,
-                            <div class="r-stack">
-                                <span class="fragment fade-out">
-                                    $$
-                                    J_{\alpha}(x_0)=\mathbb{E}\left[\sum_{t=0}^{\infty}\alpha^t R_t\mid X_0=x_0\right]
-                                    $$
-                                    where $0<\alpha<1$ is the discount factor.
-                                </span>
-                                <span class="fragment">
-                                    $$
-                                    J(x_0)=\lim_{n\rightarrow\infty}\mathbb{E}\left[\frac{1}{n}\sum_{t=0}^{n}R_t\mid X_0=x_0\right]
-                                    $$
-                                </span>
-                            </div>
-                        </li>
-                    </ul>
+                    We shall form a <strong>Continuous Time Markov Chain</strong>.
+                    <br>
+                    <span class="fragment" data-fragment-index="0">From any state $\left( S(t), I(t)\right)$, two jumps are possible.</span>
+                    <table style="color: #fff;" class="fragment" data-fragment-index="1">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Event
+                                </th>
+                                <th>
+                                    Rate
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="fragment" data-fragment-index="1">
+                                <td>
+                                    $\left( S(t), I(t) \right) \rightarrow \left( S(t)-1, I(t)+1 \right)$
+                                </td>
+                                <td>
+                                    $\frac{\beta}{N}S(t)I(t)$
+                                </td>
+                            </tr>
+                            <tr class="fragment" data-fragment-index="2">
+                                <td>
+                                    $\left( S(t), I(t) \right) \rightarrow \left( S(t), I(t)-1 \right)$
+                                </td>
+                                <td>
+                                    $\gamma I(t)$
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </section>
-                <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 32px;" data-auto-animate>
-                    <h3 id="heading">
-                        Objective Function
+                <section data-background="spatio_media/background.jpeg" data-background-opacity=0.05 style="text-align: left; font-size: 32px;">
+                    <h3>
+                        Spatial extension: <br>Metapopulation model
                     </h3>
-                    So, for a given policy $\pi$, we can evaluate the policy as,
+                    Divide the population into $K$ subpopulations. Assume homogeneous mixing within each subpopulation.
+                    <br>
+                    <span class="fragment">
+                        Here is the deterministic SIR model: For $1\le k \le K$,
+                        $$
+                        \begin{aligned}
+                        \frac{dS_k(t)}{dt} &= -\frac{\beta_k}{N_k}S_k(t)\left(\sum_{l=1}^{K} w_{kl}I_l(t) \right)\\
+                        \frac{dI_k(t)}{dt} &= \frac{\beta_k}{N_k}S_k(t)\left(\sum_{l=1}^{K} w_{kl}I_l(t) \right) - \gamma I_k(t)\\
+                        \frac{dR_k(t)}{dt} &= \gamma I_k(t)
+                        \end{aligned}
+                        $$
+                    </span>
+                </section>
+                <section data-background="spatio_media/background.jpeg" data-background-opacity=0.05 style="text-align: left; font-size: 32px;">
+                    <h3>
+                        Stochastic Metapopulation model
+                    </h3>
+                    For the deterministic model, the rate is now,
                     $$
-                    J^{\pi}_{\alpha}(x_0)=\mathbb{E}\left[\sum_{t=0}^{\infty}\alpha^t R_t^{\pi}\mid X_0=x_0\right]
+                    \lambda_k(t) = \frac{\beta_k}{N_k}S_k(t)\left(\sum_{l=1}^{K} w_{kl}I_l(t) \right)
                     $$
-                    where $A_t=\pi(X_t)$ at each step, and <br>thus, expected $R^{\pi}_t=R_{\pi(X_t)}(X_t, X_{t+1})$.
-                    <div class="fragment">
-                        For other value functions, we can evaluate the policy similarly.
-                    </div>
+                    <br>
+                    <span class="fragment">
+                        Thus we can think of a CTMC where from the state $\left( S_1(t), \ldots, S_K(t), I_1(t), \ldots, I_K(t) \right)$, it can jump to one of $2K$ many states:
+                        <ul class="fragment">
+                            <li>
+                                One susceptible in $k^\text{th}$ group gets infected. Rate: $\lambda_k(t)$
+                            </li>
+                            <li>
+                                One infected in $k^\text{th}$ group recovers. Rate: $\gamma I_k(t)$
+                            </li>
+                        </ul>
+                    </span>
                 </section>
-                <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 32px;" data-auto-animate>
-                    <h3 id="heading">
-                        Objective Function
+                <section data-background="spatio_media/background.jpeg" data-background-opacity=0.05 style="text-align: left; font-size: 34px;">
+                    <h3>
+                        Parameter Estimation
                     </h3>
-                    <div>
-                        Clearly, the maximized objective function is given by,
-                        $$
-                        J^{\star}_{\alpha}(x_0)=\max_{\pi}J^{\pi}_{\alpha}(x_0)
-                        $$
-                    </div>
-                    <div class="fragment">
-                        and the optimal policy is,
-                        $$
-                        \pi^{\star}=\arg\max_{\pi}J^{\pi}_{\alpha}(x_0)
-                        $$
-                    </div>
-                    <div class="fragment">
-                        <hr>
-                        But these are just notations. How to &ldquo;compute&rdquo; those quantities for a given problem?
-                    </div>
-                </section>
-                <section>
-                    <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 32px;">
-                        <h3 id="heading">
-                            Solving MDP
-                        </h3>
-                        <div>
-                            For finite horizon, note that the optimal policy must optimize the tail part obtained by truncating at each time point. This motivates <strong>Dynamic Programming</strong> with <strong>Backward Induction</strong>.
-                        </div>
-                        <div class="fragment">
-                            For example, find $\pi_{n-1}^{\star}$ using,
-                            $$
-                            \pi_{n-1}^{\star}(x_{n-1})=\arg\max_{a\in\mathcal{A}}\mathbb{E}\left[R_{n-1}\mid X_{n-1}=x_{n-1}, A_{n-1}=a\right]
-                            $$
-                        </div>
-                        <div class="fragment">
-                            Using $\pi_{n-1}^{\star}$, we can find $\pi_{n-2}^{\star}$ using,
-                            $$
-                            \pi_{n-2}^{\star}(x_{n-2})=\\ \arg\max_{a\in\mathcal{A}}\mathbb{E}\left[R_{n-2}+J_{n-1,n}^{\star}\mid X_{n-2}=x_{n-2}, A_{n-2}=a\right]
-                            $$
-                            and so on.
-                        </div>
-                    </section>
-                    <section data-visibility="uncounted" data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 32px;">
-                        <h3 id="heading">
-                            Solving MDP
-                        </h3>
-                        First consider the problem for finite horizon, upto time $n$. Want to find $\pi$ such that $J^{\pi}_n(x)$ is maximized.<br>
-                        <span class="fragment">
-                            The policy need not be time homogeneous, as the time horizon is finite. So consider $\mathbf{\pi}=(\pi_0, \ldots, \pi_{n-1})$.
-                        </span>
-                        <span class="fragment">
-                            Define a value function for the tail part, i.e.,
-                            $$
-                            J^{\pi}_{i,n}(x_i)=\mathbb{E}\left[\sum_{t=i}^{n-1}R_t\mid X_i=x_i\right]$$
-                        </span>
-                    </section>
-                    <section data-visibility="uncounted" data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 32px;" data-auto-animate>
-                        <h3 id="heading">
-                            Solving MDP
-                        </h3>
-                        <div>
-                            One crucial observation is, for the optimal policy $\mathbf{\pi}^{\star}$ and any state $x_i$, the tail policy $(\pi_i^{\star}, \ldots, \pi_{n-1}^{\star})$ optimizes the value from $x_i$ irrespective of the previous actions and transitions. This is the <strong>Bellman&rsquo;s Principle of optimality</strong>.
-                        </div>
-                        <div class="fragment">
-                            <hr>
-                            So to find $(\pi_0^{\star}, \ldots, \pi_{n-1}^{\star})$, we can start with finding $\pi_{n-1}^{\star}$. Then using that $\pi_{n-1}^{\star}$, we can find $\pi_{n-2}^{\star}$, and so on.
-                        </div>
-                        <div class="fragment">
-                            Thus, we can do <strong>Dynamic Programming</strong> with <strong>Backward Induction</strong>.
-                        </div>
-                    </section>
-                    <section data-visibility="uncounted" data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 32px;" data-auto-animate>
-                        <h3 id="heading">
-                            Solving MDP
-                        </h3>
-                        <div>
-                            Finding $\pi_{n-1}^{\star}$ is easy. It is given by,
-                            $$
-                            \pi_{n-1}^{\star}(x_{n-1})=\arg\max_{a\in\mathcal{A}}\mathbb{E}\left[R_{n-1}\mid X_{n-1}=x_{n-1}, A_{n-1}=a\right]\\
-                            \text{and }J_{n-1, n}^{\star}(x_{n-1})=\max_{a\in\mathcal{A}}\mathbb{E}\left[R_{n-1}\mid X_{n-1}=x_{n-1},A_{n-1}=a\right]
-                            $$
-                        </div>
-                    </section>
-                    <section data-visibility="uncounted" data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 32px;" data-auto-animate>
-                        <h3 id="heading">
-                            Solving MDP
-                        </h3>
-                        <div>
-                            Using $\pi_{n-1}^{\star}$, we can find $\pi_{n-2}^{\star}$ using,
-                            $$
-                            \pi_{n-2}^{\star}(x_{n-2})=\\ \arg\max_{a\in\mathcal{A}}\mathbb{E}\left[R_{n-2}+J_{n-1,n}^{\star}\mid X_{n-2}=x_{n-2}, A_{n-2}=a\right]\\
-                            \text{and, }J_{n-2, n}^{\star}(x_{n-2})=\\ \max_{a\in\mathcal{A}}\mathbb{E}\left[R_{n-2}+J_{n-1,n}^{\star}\mid X_{n-2}=x_{n-2}, A_{n-2}=a\right]
-                            $$
-                        </div>
-                    </section>
+                    Suppose we have observed the process for time $(0, T]$. We have individual level data:
+                    $$
+                    \left\{ (t_i, y_i, k_i): i=1, \ldots, n \right\}
+                    $$
+                    <br>
+                    $n$ : Number of infections
+                    <br>
+                    $t_i$ : Time of infection for $i^\text{th}$ infected
+                    <br>
+                    $y_i$ : Length of infectious period
+                    <br>
+                    $k_i$ : Corresponding subpopulation
                 </section>
                 <section>
                     <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 32px;">
