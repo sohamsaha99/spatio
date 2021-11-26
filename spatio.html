@@ -42,41 +42,61 @@
                         November 27, 2021
                     </div>
                 </section>
-                <section data-background="spatio_media/background.jpeg" data-background-opacity=0.07 style="text-align: left;">
+                <section data-background="spatio_media/background.jpeg" data-background-opacity=0.05 style="text-align: left;">
                     <h3>
                         We are going to discuss:
                     </h3>
                     <ul>
                         <li>
-                            Deterministic and stochastic SIR Models
+                            Deterministic and stochastic SIR models
                         </li>
                         <li>
-                            Metapopulation SIR Models
+                            Metapopulation SIR models
                         </li>
                         <li>
-                            Discrete Time Models
+                            Discrete Time models
                         </li>
                         <li>
-                            
+                            Endemic-epidemic models
+                        </li>
+                        <li>
+                            Case studies
                         </li>
                     </ul>
                 </section>
-                <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 39px;">
+                <section data-background="spatio_media/background.jpeg" data-background-opacity=0.05 style="text-align: left;">
                     <h3>
-                        Basic Idea
+                        <span class="fragment fade-up">Why </span> Do We Care?
                     </h3>
-                    A <strong>Markov Decision Process (MDP)</strong> is a discrete-time stochastic control process<span class="fragment">, i.e., similar to usual Markov chain, but the transition events can be influenced by some action.</span>
+                    <div style="margin-bottom: 50px;">
+                    </div>
+                    <h3 class="fragment fade-up">
+                        <hr>
+                        Data Sources
+                    </h3>
                     <ul>
                         <li class="fragment">
-                            Transitions are partly random, and partly under the <strong>influence of a decision maker</strong>.
+                            Surveillance data collected by national surveillance systems
                         </li>
                         <li class="fragment">
-                            Additionally, there is some <strong>reward/penalty</strong> for each transition event.
+                            Reported in several strata formed by administrative area / age-groups
                         </li>
                         <li class="fragment">
-                            The goal is to find a <strong>policy/strategy</strong> such that the total reward is <strong>maximized in long term</strong>.
+                            Data available in aggregated form, not individual level
                         </li>
                     </ul>
+                </section>
+                <section data-background="spatio_media/background.jpeg" data-background-opacity=0.05 style="text-align: left; font-size: 34px;">
+                    <h3>
+                        Basic models
+                    </h3>
+                    $$
+                    \begin{aligned}
+                    \frac{dS(t)}{dt} &= -\frac{\beta}{N}S(t)I(t)\\
+                    \frac{dI(t)}{dt} &= \frac{\beta}{N}S(t)I(t) - \gamma I(t)\\
+                    \frac{dR(t)}{dt} &= \gamma I(t)
+                    \end{aligned}
+                    $$
                 </section>
                 <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 34px;">
                     <h3>
