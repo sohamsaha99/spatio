@@ -388,9 +388,81 @@
                 </section>
                 <section data-background="spatio_media/background.jpeg" data-background-opacity=0.05 style="text-align: left; font-size: 34px;">
                     <h3>
-                        Endemic-epidemic model
+                        Endemic-epidemic model: Parameter Estimation
                     </h3>
-                    
+                    <span class="fragment">
+                        $$
+                        l_{pen}\left( \boldsymbol{\beta}, \boldsymbol{b}; \boldsymbol{\Sigma} \right) = l\left(\boldsymbol{\beta}, \boldsymbol{b}\right) + \log \left( p\left( \boldsymbol{b}|\boldsymbol{\Sigma} \right) \right)
+                        $$
+                        where,
+                        $$
+                        l\left(\boldsymbol{\beta}, \boldsymbol{b}\right) = \sum_{r,t}y_{r,t}\log\left( \mu_{rt} \right) - \mu_{rt} - \log \Gamma\left( y_{r,t}+1 \right)\\
+                        \log \left( p\left( \boldsymbol{b}|\boldsymbol{\Sigma} \right) \right) = -\frac{1}{2}\boldsymbol{b}^T\boldsymbol{\Sigma}^{-1}\boldsymbol{b}
+                        $$
+                    </span>
+                </section>
+                <section data-background="spatio_media/background.jpeg" data-background-opacity=0.05 style="text-align: left; font-size: 34px;">
+                    <h3>
+                        Model assessment
+                    </h3>
+                    <span class="fragment">
+                        <strong>Scoring rules:</strong>
+                    </span>
+                    <br>
+                    <span class="fragment">
+                        Suppose predicted probability distribution is $P$ and true outcome is $y$. Scoring rule measures the predictive quality by assigning a numerical penalty $S(P, y)$.
+                    </span>
+                    <br><br>
+                    <span class="fragment">
+                        If expected value of $S(P, y)$ is indeed minimized when $y\sim P$, then $S(\cdot, \cdot)$ is a <strong>proper</strong> scoring rule.
+                    </span>
+                    <br><br>
+                    <span class="fragment">
+                        If the minimum is unique, then $S(\cdot, \cdot)$ is called <strong>strictly proper</strong>.
+                    </span>
+                </section>
+                <section data-background="spatio_media/background.jpeg" data-background-opacity=0.05 style="text-align: left; font-size: 34px;">
+                    <h3>
+                        Model assessment: Scoring rules
+                    </h3>
+                    Some examples:
+                    <span class="fragment">
+                        $$
+                        SES(P, y) := (y - \mu_P)^2
+                        $$
+                    </span>
+                    <br>
+                    <span class="fragment">
+                        $$
+                        logS(P, y) := -\log P(Y=y)\quad \left[Y\sim P\right]
+                        $$
+                    </span>
+                    <br>
+                    <span class="fragment">
+                        $$
+                        RPS(P, y) := \sum_{k=0}^{\infty} \left( P(Y\le k) - \mathbb{1}(y \le k) \right)^2 \quad \left[Y\sim P\right]
+                        $$
+                    </span>
+                </section>
+                <section data-background="spatio_media/background.jpeg" data-background-opacity=0.05 style="text-align: left; font-size: 34px;">
+                    <h3>
+                        Model assessment: Scoring rules
+                    </h3>
+                    To compare two models:
+                    <ul>
+                        <li class="fragment">
+                            Generate sets of one-step ahead predictions by the two models for some fixed time points.
+                        </li>
+                        <li class="fragment">
+                            Compute two sets of scores from the outcomes.
+                        </li>
+                        <li class="fragment">
+                            Then we can compare the means.
+                        </li>
+                        <li class="fragment">
+                            Or, we can do a permutation test to check if the differences in scores are significant.
+                        </li>
+                    </ul>
                 </section>
                 <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 32px;">
                     <h3>
