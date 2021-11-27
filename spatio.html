@@ -464,319 +464,63 @@
                         </li>
                     </ul>
                 </section>
-                <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 32px;">
+                <section data-background="spatio_media/background.jpeg" data-background-opacity=0.05 style="text-align: left; font-size: 34px;">
                     <h3>
-                        Cart-Pole problem
+                        Case Study<br>COVID-19 USA (Rui et al., 2021)
                     </h3>
-                    Classical problem of balancing a pole by applying force on a cart.
-                    <div class="fragment">
-                        We have a system like this:
+                    <strong>Study period:</strong> March 15 - September 13, 2020
+                    <br>
+                    <strong>Study area:</strong> 50 states & Washington D.C.
+                    <br>
+                    <strong>COVID-19 Data:</strong> State-level cumulative confirmed cases
+                    <br>
+                    <span class="fragment">
+                        <strong>Weather data:</strong> maximum temperature (MaT), minimum temperature (MiT), humidity (Hu), the probability of precipitation appearance (PA), the percentage of cloud coverage (CC), sea-level air pressure (AP), wind speed (WS), and the columnar density of total atmospheric ozone (CDTAO)
                         <br>
-                        <div style="text-align: center;" class="r-stretch">
-                            <img data-src="sp2020/cartpole_preview_loop.gif">
-                            <br>
-                            Want to balance the stick
-                        </div>
-                        <br>
-                    </div>
+                        <strong>Population data:</strong> State-level population percentage of people over 65 years old
+                    </span>
                 </section>
-                <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 32px;" data-auto-animate>
+                <section data-background="spatio_media/background.jpeg" data-background-opacity=0.05 style="text-align: left; font-size: 34px;">
+                    <!-- <h3>
+                        Case Study<br>COVID-19 USA
+                    </h3> -->
+                    <img data-src="spatio_media/raw_data.png">
+                </section>
+                <section data-background="spatio_media/background.jpeg" data-background-opacity=0.05 style="text-align: left; font-size: 34px;">
                     <h3>
-                        Cart-Pole problem
+                        Case Study<br>COVID-19 USA
                     </h3>
-                    <h4>
-                        Some bad policies:
-                    </h4>
-                    Choose the action randomly:
-                    <div style="text-align: center;">
-                        <img data-src="sp2020/gym_animation_random.gif">
-                        <br>
-                        Mean life: 22.93
-                    </div>
+                    How to choose the explanatory variables?
+                    <br>
+                    <span class="fragment">
+                        Kendall and Spearman-rank correlation
+                    </span>
                 </section>
-                <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 32px;" data-auto-animate>
-                    <h3>
-                        Cart-Pole problem
-                    </h3>
-                    <h4>
-                        Some bad policies:
-                    </h4>
-                    Based on position $x$ only:
-                    <div style="text-align: center;">
-                        <img data-src="sp2020/gym_animation_x.gif">
-                        <br>
-                        Mean life: 29.33
-                    </div>
+                <section data-background="spatio_media/background.jpeg" data-background-opacity=0.05 style="text-align: left; font-size: 34px;">
+                    <!-- <h3>
+                        Case Study<br>COVID-19 USA
+                    </h3> -->
+                    <img data-src="spatio_media/corr_test.png">
                 </section>
-                <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 32px;" data-auto-animate>
-                    <h3>
-                        Cart-Pole problem
-                    </h3>
-                    <h4>
-                        Some bad policies:
-                    </h4>
-                    Based on angle $\theta$ only:
-                    <div style="text-align: center;">
-                        <img data-src="sp2020/gym_animation_theta.gif">
-                        <br>
-                        Mean life: 41.40
-                    </div>
+                <section data-background="spatio_media/background.jpeg" data-background-opacity=0.05 style="text-align: left; font-size: 34px;">
+                    <!-- <h3>
+                        Case Study<br>COVID-19 USA
+                    </h3> -->
+                    <img data-src="spatio_media/decompose.png">
                 </section>
-                <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 32px;" data-auto-animate>
-                    <h3>
-                        Cart-Pole problem
-                    </h3>
-                    <div>
-                        Discrete representation of the states:
-                        <ul>
-                            <li>
-                                The whole range of $x$ was divided into three regions: Left-Forbidden, Good, Right-Forbidden
-                            </li>
-                            <li>
-                                Each of $v, \theta, \omega$ was also categorized into 5 regions.
-                            </li>
-                            <li class="fragment">
-                                So, $\#$ of states$=3\times 5^3=375$
-                            </li>
-                            <li class="fragment">
-                                At each time point, the continuous observations are collected from the simulator. Then a small amount of random noise is added, and then the observation is categorized.
-                            </li>
-                            <li class="fragment">
-                                Based on the supplied category, the program has to take a decision which will be sent to the simulator.
-                            </li>
-                        </ul>
-                    </div>
+                <section data-background="spatio_media/background.jpeg" data-background-opacity=0.05 style="text-align: left; font-size: 34px;">
+                    <!-- <h3>
+                        Case Study<br>COVID-19 USA
+                    </h3> -->
+                    <img data-src="spatio_media/fitted1.png">
                 </section>
-                <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 32px;" data-auto-animate>
-                    <h3>
-                        Cart-Pole problem
-                    </h3>
-                    <div>
-                        The transition probabilities under each action were estimated beforehand using simulation.
-                        <br>
-                        <div class="fragment">
-                            The reward is defined as follows:
-                            $$
-                            R_a(x,y)=
-                            \begin{cases}
-                            -10, & \text{if }y\text{ is a forbidden state}\\
-                            2, & \text{if }y\text{ is a `very good' state}\\
-                            0, & \text{otherwise}
-                            \end{cases}
-                            $$
-                        </div>
-                    </div>
+                <section data-background="spatio_media/background.jpeg" data-background-opacity=0.05 style="text-align: left; font-size: 34px;">
+                    <!-- <h3>
+                        Case Study<br>COVID-19 USA
+                    </h3> -->
+                    <img data-src="spatio_media/fitted2.png">
                 </section>
-                <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 32px;" data-auto-animate>
-                    <h3>
-                        Cart-Pole problem
-                    </h3>
-                    <!-- <div>
-                        The result is as follows:
-                    </div> -->
-                    <div style="text-align: center;">
-                        <img data-src="sp2020/mdp_cartpole_1.gif" style="padding-bottom: : 0px;">
-                        <img data-src="sp2020/mdp_cartpole_2.gif" style="padding-bottom: : 0px;">
-                    </div>
-                    <div style="text-align: center;">
-                        <img data-src="sp2020/mdp_cartpole_3.gif">
-                        <br>
-                        Mean life: 195.80
-                    </div>
-                </section>
-                <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 32px;" data-auto-animate>
-                    <h3>
-                        Cart-Pole problem
-                    </h3>
-                    <div>
-                        The result is as follows:
-                    </div>
-                    <div>
-                        For 100 simulations upto time 200, the following was obtained:
-                        <table style="color: #fff;">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>Mean Life</th>
-                                <th>Min.</th>
-                                <th>Max.</th>
-                                <th>#(==200)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    Random policy
-                                </td>
-                                <td>
-                                    22.93
-                                </td>
-                                <td>
-                                    9
-                                </td>
-                                <td>
-                                    66
-                                </td>
-                                <td>
-                                   0 
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    x-based if-else
-                                </td>
-                                <td>
-                                    29.33
-                                </td>
-                                <td>
-                                    8
-                                </td>
-                                <td>
-                                    56
-                                </td>
-                                <td>
-                                   0 
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    $\theta$-based if-else
-                                </td>
-                                <td>
-                                    41.40
-                                </td>
-                                <td>
-                                    25
-                                </td>
-                                <td>
-                                    59
-                                </td>
-                                <td>
-                                   0 
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    MDP
-                                </td>
-                                <td>
-                                    195.8
-                                </td>
-                                <td>
-                                    170
-                                </td>
-                                <td>
-                                    200
-                                </td>
-                                <td>
-                                    61
-                                </td>
-                            </tr>
-                        </tbody>
-                        </table>
-                    </div>
-                </section>
-                <section data-background-iframe="https://sohamsaha99.github.io/2147483648.html?size=2&mode=normal" data-background-interactive style="text-align: left; font-size: 36px;">
-                    <h3 style="color: black;">
-                        Toy example : 2048
-                    </h3>
-                </section>
-                <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 32px;">
-                    <h3>
-                        Toy example : 2048
-                    </h3>
-                    Why $2\times 2$?
-                    <ul>
-                        <li class="fragment">
-                            For $4\times 4$, it is possibe to go to 2048 (possibly more than that), and there are trillions of states.
-                        </li>
-                        <li class="fragment">
-                            If we consider the $4\times 4$ game upto 64, that has about 40 billion states.
-                        </li>
-                        <li class="fragment">
-                            For $3\times 3$, it is possible to go upto 1024 and there are about 25 million states.
-                        </li>
-                        <li class="fragment">
-                            For $2\times 2$, it is possible to reach 32, and there are at most $6^4=1296$ states.
-                        </li>
-                    </ul>
-                </section>
-                <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 32px;">
-                    <h3>
-                        Toy example : 2048
-                    </h3>
-                    <div class="fragment">
-                        <ul>
-                            <li>
-                                After each move, the game randomly chooses a blank tile.
-                            </li>
-                            <li>
-                                In that position, a <strong>4</strong> is placed with probability 0.1, a <strong>2</strong> is placed with probability 0.9
-                            </li>
-                            <li>
-                                If there is no blank space, the game is over.
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="fragment">
-                        So we can explicitly calculate the transition probabilities.
-                    </div>
-                </section>
-                <section data-background-iframe="sp2020/invert_svg_2048.html" data-background-interactive style="text-align: right; font-size: 36px;" data-background-opacity=1>
-                    <h3>
-                        Toy example : 2048
-                    </h3>
-                    Transition probabilities
-                </section>
-                <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 32px;" data-auto-animate>
-                    <h3>
-                        Toy example : 2048
-                    </h3>
-                    Reward is defined as follows:
-                    $$R_a(x,y)=
-                    \begin{cases}
-                    +5, & \text{if }y\text{ contains 32}\\
-                    -5, & \text{if move }a\text{ is invalid for state }x\\
-                    0, & \text{otherwise}
-                    \end{cases}
-                    $$
-                </section>
-                <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 32px;" data-auto-animate>
-                    <h3>
-                        Toy example : 2048
-                    </h3>
-                    Here is the result:
-                    <div class="fragment">
-                        From 200 simulations, the highest tiles were as following:
-                        <table style="color: #fff;">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>8</th>
-                                    <th>16</th>
-                                    <th>32</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        MDP
-                                    </td>
-                                    <td>
-                                        7
-                                    </td>
-                                    <td>
-                                        179
-                                    </td>
-                                    <td>
-                                        14
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-                <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 35px;">
+                <!-- <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 35px;">
                     <h3>
                         Conclusion:
                     </h3>
@@ -791,8 +535,8 @@
                             The main challange is to solve a problem with huge number of states.
                         </li>
                     </ul>
-                </section>
-                <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left;">
+                </section> -->
+                <section data-background="spatio_media/background.jpeg" data-background-opacity=0.05 style="text-align: left; font-size: 30px;">
                     <h3>
                     </h3>
                     <ul>
@@ -801,37 +545,31 @@
                             <br>
                             <ul>
                                 <li>
-                                    Reinforcement Learning: An Introduction, Richard S. Sutton and Andrew G. Barto
+                                    Michael Höhle. (2016), Infectious Disease Modelling from: Handbook of Spatial Epidemiology CRC Press
                                 </li>
                                 <li>
-                                    <a href="https://www.stat.berkeley.edu/~bartlett/courses/2014fall-cs294stat260/" target="_BLANK">Lecture</a> <a href="https://www.cs.cmu.edu/afs/cs/academic/class/15780-s16/www/slides/mdps.pdf" target="_BLANK">Notes</a> available online
+                                    Held, L., Höhle, M., & Hofmann, M. (2005). A statistical framework for the analysis of multivariate infectious disease surveillance counts.
+                                </li>
+                                <li>
+                                    Paul, M. and Held, L. (2011), Predictive assessment of a non-linear random effects model for multivariate time series of infectious disease counts.
+                                </li>
+                                <li>
+                                    Rui R, Tian M, Tang M-L, Ho GT-S, Wu C-H. Analysis of the Spread of COVID-19 in the USA with a Spatio-Temporal Multivariate Time Series Model.
                                 </li>
                             </ul>
                         </li>
-                        <br><br>
                         <li>
                             <strong><u>Presented by:</u></strong>
                             <br>
-                            Tamoghna Gupta
+                            Riddhiman Saha
                             <br>
-                            M.Stat. 1st Year
+                            M.Stat. 2nd Year
                             <br>
                             ISI Kolkata
-                            <!-- <ul>
-                                <li>
-                                    Tamoghna Gupta
-                                </li>
-                                <li>
-                                    Riddhiman Saha
-                                </li>
-                                <li>
-                                    Souhardya Ray
-                                </li>
-                            </ul> -->
                         </li>
                     </ul>
                 </section>
-                <section data-background="sp2020/last_slide.png" data-background-opacity=0.25 data-background-transition="zoom">
+                <section data-background="spatio_media/background.jpeg" data-background-opacity=0.07 data-background-transition="zoom">
                     <h2>
                         Thank You
                     </h2>
