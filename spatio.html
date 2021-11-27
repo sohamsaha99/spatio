@@ -335,6 +335,63 @@
                         </li>
                     </ul>
                 </section>
+                <section data-background="spatio_media/background.jpeg" data-background-opacity=0.05 style="text-align: left; font-size: 34px;">
+                    <h3>
+                        Endemic-epidemic model
+                    </h3>
+                    <h3>
+                        Motivation
+                    </h3>
+                    If we consider a multivariate extension, then it would become a multi-type branching process with immigration:
+                    $$
+                    \boldsymbol{\mu_t} = \boldsymbol{\Lambda}\boldsymbol{y_{t-1}} + \boldsymbol{\nu}
+                    $$
+                    <span class="fragment">
+                        which is same as,
+                        $$
+                        \mu_{it} = \lambda y_{i, t-1} + \phi \sum_{j\ne i}y_{j, t-1}+n_{it}\nu_{it}
+                        $$
+                        and $\boldsymbol{\Lambda}$ has diagonal entries $\lambda$ and off-diagonal $\phi$.
+                    </span>
+                </section>
+                <section data-background="spatio_media/background.jpeg" data-background-opacity=0.05 style="text-align: left; font-size: 34px;">
+                    <h3>
+                        Endemic-epidemic model
+                    </h3>
+                    So the model is proposed:
+                    $$
+                    y_{r,t}|\boldsymbol{y_{t-1}} \sim \text{Poi}(\mu_{rt})\\
+                    \mu_{rt} = \lambda_r y_{r, t-1} + \phi_r \sum_{q\ne r}w_{qr}y_{q, t-1} + n_{rt}\nu_{rt}\\
+                    \lambda_r, \phi_r, \nu_{rt} \ge 0\\
+                    r=1, \ldots, R \text{(Number of units)}, t=1, \ldots, T
+                    $$
+                </section>
+                <section data-background="spatio_media/background.jpeg" data-background-opacity=0.05 style="text-align: left; font-size: 34px;">
+                    <h3>
+                        Endemic-epidemic model
+                    </h3>
+                    Random effects?
+                    <br>
+                    <span class="fragment">
+                        If number of units is large, then we do not use unit-specific $\lambda_r, \phi_r, \nu_{rt}$. Instead, we consider them as random effects:
+                        $$
+                        \begin{aligned}
+                        \log(\lambda_r) &= \alpha^{(\lambda)} + b_r^{(\lambda)}\\
+                        \log(\phi_r) &= \alpha^{(\phi)} + b_r^{(\phi)}\\
+                        \log(\nu_{rt}) &= \alpha^{(\nu)} + b_r^{(\nu)} + h(t)\\
+                        \end{aligned}
+                        $$
+                    </span>
+                    <span class="fragment">
+                        Assume that $\boldsymbol{b}=\left( {\boldsymbol{b}^{(\lambda)}}^T, {\boldsymbol{b}^{(\phi)}}^T, {\boldsymbol{b}^{(\nu)}}^T \right)^T$ follows normal with mean $\boldsymbol{0}$ and covariance $\boldsymbol{\Sigma}=\text{diag}\left( \sigma_{\lambda}^2\boldsymbol{I}, \sigma_{\phi}^2\boldsymbol{I}, \sigma_{\nu}^2\boldsymbol{I} \right)$
+                    </span>
+                </section>
+                <section data-background="spatio_media/background.jpeg" data-background-opacity=0.05 style="text-align: left; font-size: 34px;">
+                    <h3>
+                        Endemic-epidemic model
+                    </h3>
+                    
+                </section>
                 <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 32px;">
                     <h3>
                         Cart-Pole problem
@@ -349,61 +406,6 @@
                             Want to balance the stick
                         </div>
                         <br>
-                    </div>
-                </section>
-                <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 32px;" data-auto-animate>
-                    <h3>
-                        Cart-Pole problem
-                    </h3>
-                    Here are the values:
-                    $$M=1kg, m=0.1kg, L=1m,\\ g=9.8ms^{-2}, \Delta t=0.02s$$
-                    <div class="fragment">
-                        After each 0.02s, the decision maker decides to apply a force $F$ on the cart for the next 0.02s. Possible values of $F$ are $-10N, 0N, 10N$
-                    </div>
-                    <div class="fragment">
-                        Objectives are:
-                        <ul>
-                            <li>
-                                To keep the cart within boundary.
-                            </li>
-                            <li>
-                                To keep the angle of the pole withinn a range ($-12^o$ to $12^o$)
-                            </li>
-                            <li>
-                                To keep the system within these limits upto $200^{th}$ timepoint.
-                            </li>
-                        </ul>
-                    </div>
-                </section>
-                <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 32px;" data-auto-animate>
-                    <h3>
-                        Cart-Pole problem
-                    </h3>
-                    The dynamics of the system is described by the following:
-                    <br>
-                    Define
-                    $$
-                    p(t)=\frac{F+m\omega^2(t)L \sin(\theta(t))}{M+m}
-                    $$
-                    Then,
-                    $$
-                    \frac{d\omega(t)}{dt}=\frac{g\sin(\theta(t))-p(t)\cos(\theta(t))}{L\left(\frac{4}{3}-\frac{m\cos^2(\theta(t))}{M+m}\right)}\\
-                    \frac{dv(t)}{dt}=p(t)-\frac{mL\frac{d\omega(t)}{dt}\cos(\theta(t))}{M+m}
-                    $$
-                </section>
-                <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 32px;" data-auto-animate>
-                    <h3>
-                        Cart-Pole problem
-                    </h3>
-                    Given $x, v, \theta, \omega$ at time $t$, we can compute the state for time $t+\Delta t$. And apply the force accordingly.
-                    <div class="fragment">
-                        Yes, the process is deterministic if the precise measurements are given. <span class="fragment">But a little child can also balance a pole on his/her hand, without knowing the physics or the precise measurements.</span>
-                        <div class="fragment">
-                            Here we try to mimic the same behaviour. We shall provide only some discrete info about the state and see if we can find a good policy.
-                        </div>
-                        <div class="fragment">
-                            <strong>Drawback:</strong> Markov property may no longer be valid. But let&rsquo;s see how it goes.
-                        </div>
                     </div>
                 </section>
                 <section data-background="sp2020/pacman.png" data-background-opacity=0.07 style="text-align: left; font-size: 32px;" data-auto-animate>
